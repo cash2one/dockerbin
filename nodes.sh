@@ -1,26 +1,42 @@
 #!/bin/bash
+init_unicast
+UNICAST_HOSTS_STR=`join , ${UNICAST_HOSTS[@]}`
+echo $UNICAST_HOSTS_STR
 
-while getopts "a:b:s:e:" arg
-    do
-        case $arg in
-            "b")
-		echo $OPTARG
-                bulk=$OPTARG
-                ;;
-            "s")
-                startOffset=$OPTARG
-                ;;
-            "e")
-                endOffset=$OPTARG
-                ;;
-            "?")
-                echo "unknow argument"
-                ;;
-	    "a")
-		echo "Run all nodes"
-		;;
-        esac
-    done
+case $1 in
+	start)
+		all_nodes
+		exit 0
+	;;
+	stop)
+		stop_all_nodes
+		exit 0
+	;;
+	start_master)
+		start_masters
+		exit 0
+	;;
+	start_querys)
+		start_querys
+		exit 0
+	;;
+	start_datas)
+		start_datas
+		exit 0
+	;;
+	stop_masters)
+		stop_masters
+		exit 0
+	;;
+	stop_querys)
+		stop_querys
+		exit 0
+	;;
+	stop_datas)
+		stop_datas;
+		exit 0
+	;;
+esac
 
 #all_nodes
 #docker run -d -p 29300:29300 -p 29200:29200 -v /usr/local/elasticsearch/master/:/usr/local/elasticsearch/config -v /es/master1/:/data -e ES_MIN_MEM=16g -e ES_MAX_MEM=16g elasticsearch:v1 /start.sh
@@ -46,7 +62,6 @@ HOST=172.17.42.1
 UNICAST_HOSTS=():
 
 all_nodes(){
-
 	start_masters
 	start_querys
 	start_datas
@@ -60,13 +75,13 @@ init_unicast(){
 		total=$(expr ${total} + 1)
 	done
 		
-	for idx in ${QUERY_NUM[@]};
+	for idx in "${QUERY_NUM[@]}";
         do
                 UNICAST_HOSTS[${total}]=${HOST}:${QUERY_NODE}${idx}
                 total=$(expr ${total} + 1)
         done
        
-	for idx in ${DATA_NUM[@]};
+	for idx in "${DATA_NUM[@]}";
         do
                 UNICAST_HOSTS[${total}]=${HOST}:${DATA_NODE}${idx}
                 total=$(expr ${total} + 1)
@@ -84,12 +99,14 @@ start_masters(){
 
 start_querys(){
 	ROLE=query
-	loop_nodes ${QUERY_NUM[@]} ${ROLE} ${QUERY_HTTP} ${QUERY_NODE} ${QUERY_MEM}
+	ARRAY=( ${QUERY_NUM[@]} )
+	loop_nodes 0 ${ROLE} ${QUERY_HTTP} ${QUERY_NODE} ${QUERY_MEM}
 }
 
 start_datas(){
 	ROLE=data
-	loop_nodes ${DATA_NUM[@]} ${ROLE} ${DATA_HTTP} ${DATA_NODE} ${DATA_MEM}
+	ARRAY=( ${DATA_NUM[@]} )
+	loop_nodes 0 ${ROLE} ${DATA_HTTP} ${DATA_NODE} ${DATA_MEM}
 }
 
 # {1,2,3.....} {master|query|data} {2920} {2930} {16g|32g}
@@ -114,7 +131,7 @@ start_nodes(){
 	HOST_NODE_PORT=$4
 	MEM_SIZE=$5
 	
-	CMD="docker run -d --name ${NODE_NAME} -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /usr/local/elasticsearch/${NODE_ROLE}/:/usr/local/elasticsearch/config -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
+	CMD="docker run -d --name ${NODE_NAME} -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /usr/local/elasticsearch/${NODE_ROLE}/:/usr/local/elasticsearch/config -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
 
 
 	echo 'Now running:' ${NODE_NAME}
@@ -130,8 +147,4 @@ join(){
 	echo "$*";
 }
 
-init_unicast
-UNICAST_HOSTS_STR=`join , ${UNICAST_HOSTS[@]}`
-echo $UNICAST_HOSTS_STR
 
-all_nodes
