@@ -21,6 +21,12 @@ DATA_NODE=2960
 HOST=172.17.42.1
 UNICAST_HOSTS=():
 
+join(){
+	local IFS="$1";
+	shift;
+	echo "$*";
+}
+
 init_unicast
 UNICAST_HOSTS_STR=`join , ${UNICAST_HOSTS[@]}`
 echo $UNICAST_HOSTS_STR
@@ -132,14 +138,6 @@ stop_querys(){
 stop_nodes(){
 	docker stop $1
 }
-
-join(){
-	local IFS="$1";
-	shift;
-	echo "$*";
-}
-
-
 
 case $1 in
 	start)
