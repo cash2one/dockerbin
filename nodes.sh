@@ -1,45 +1,5 @@
 #!/bin/bash
-init_unicast
-UNICAST_HOSTS_STR=`join , ${UNICAST_HOSTS[@]}`
-echo $UNICAST_HOSTS_STR
 
-case $1 in
-	start)
-		all_nodes
-		exit 0
-	;;
-	stop)
-		stop_all_nodes
-		exit 0
-	;;
-	start_master)
-		start_masters
-		exit 0
-	;;
-	start_querys)
-		start_querys
-		exit 0
-	;;
-	start_datas)
-		start_datas
-		exit 0
-	;;
-	stop_masters)
-		stop_masters
-		exit 0
-	;;
-	stop_querys)
-		stop_querys
-		exit 0
-	;;
-	stop_datas)
-		stop_datas;
-		exit 0
-	;;
-esac
-
-#all_nodes
-#docker run -d -p 29300:29300 -p 29200:29200 -v /usr/local/elasticsearch/master/:/usr/local/elasticsearch/config -v /es/master1/:/data -e ES_MIN_MEM=16g -e ES_MAX_MEM=16g elasticsearch:v1 /start.sh
 IMG_NAME=elasticsearch:v1
 
 MASTER_MEM=16g
@@ -60,6 +20,14 @@ DATA_NODE=2960
 
 HOST=172.17.42.1
 UNICAST_HOSTS=():
+
+init_unicast
+UNICAST_HOSTS_STR=`join , ${UNICAST_HOSTS[@]}`
+echo $UNICAST_HOSTS_STR
+
+
+#all_nodes
+#docker run -d -p 29300:29300 -p 29200:29200 -v /usr/local/elasticsearch/master/:/usr/local/elasticsearch/config -v /es/master1/:/data -e ES_MIN_MEM=16g -e ES_MAX_MEM=16g elasticsearch:v1 /start.sh
 
 all_nodes(){
 	start_masters
@@ -141,6 +109,30 @@ start_nodes(){
 	sleep 20
 }
 
+stop_masters(){
+	for idx in "${MASTER_NUM[@]}";
+	do
+		stop_nodes master${idx}
+	done
+}
+
+stop_datas(){
+	for idx in "${DATA_NUM[@]}";
+	do
+		stop_nodes data${idx}
+	done
+}
+
+stop_querys(){
+	for idx in "${QUERY_NUM[@]}";
+	do
+		stop_nodes query${idx}
+	done
+}
+stop_nodes(){
+	docker stop $1
+}
+
 join(){
 	local IFS="$1";
 	shift;
@@ -148,3 +140,38 @@ join(){
 }
 
 
+
+case $1 in
+	start)
+		all_nodes
+		exit 0
+	;;
+	stop)
+		stop_all_nodes
+		exit 0
+	;;
+	start_master)
+		start_masters
+		exit 0
+	;;
+	start_querys)
+		start_querys
+		exit 0
+	;;
+	start_datas)
+		start_datas
+		exit 0
+	;;
+	stop_masters)
+		stop_masters
+		exit 0
+	;;
+	stop_querys)
+		stop_querys
+		exit 0
+	;;
+	stop_datas)
+		stop_datas;
+		exit 0
+	;;
+esac
