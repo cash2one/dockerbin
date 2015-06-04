@@ -36,39 +36,47 @@ all_nodes(){
 }
 
 start_masters(){
-ROLE
-start_nodes master1 master 29200 29300
-start_nodes master2 master 29201 29301
+	ROLE=master
+	loop_nodes (1,2) ${ROLE} 2920 2930 ${MASTER_MEM}
 }
 
 start_querys(){
-start_nodes query1 query 30000 30100
-start_nodes query2 query 30001 30101
+	ROLE=query
+	loop_nodes (1,2) ${ROLE} 3000 3010 ${QUERY_MEM}
 }
 
 start_datas(){
-start_nodes data1 data 29500 29600
-start_nodes data2 data 29501 29601
-start_nodes data3 data 29502 29602
-start_nodes data4 data 29503 29603
+	ROLE=data
+	loop_nodes (1,2,3,4) ${ROLE} 2950 2960 ${DATA_MEM}
 }
 
-
+# {1,2,3.....} {master|query|data} {2920} {2930}
+loop_nodes(){
+	ARRAY=$1
+	ROLE=$2
+	HTTP=$3
+	NODE=$4
+	MEM=$5
+	for idx in ${ARRAY[@]}
+	do
+		start_nodes ${ROLE}${idx} ${ROLE} ${HTTP}${idx} ${NODE}${idx} ${MEM}
+	done
+}
 
 
 # start node by parameter
 # {nodename} {master|lb|data} {http_port} {node_port} 
 start_nodes(){
-NODE_NAME=$1
-NODE_ROLE=$2
-HOST_HTTP_PORT=$3
-HOST_NODE_PORT=$4
-MEM_SIZE=$5
-CMD=docker run -d -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /usr/local/elasticsearch/${NODE_ROLE}/:/usr/local/elasticsearch/config -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} ${IMG_NAME} /start.sh
+	NODE_NAME=$1
+	NODE_ROLE=$2
+	HOST_HTTP_PORT=$3
+	HOST_NODE_PORT=$4
+	MEM_SIZE=$5
+	CMD=docker run -d -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /usr/local/elasticsearch/${NODE_ROLE}/:/usr/local/elasticsearch/config -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} ${IMG_NAME} /start.sh
 
-echo 'Now running: ${CMD}'
+	echo 'Now running: ${CMD}'
 
-`${CMD}`
+	`${CMD}`
 
-sleep 20
+	sleep 20
 }
