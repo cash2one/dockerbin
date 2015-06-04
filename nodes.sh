@@ -27,20 +27,9 @@ join(){
 	echo "$*";
 }
 
-init_unicast
-UNICAST_HOSTS_STR=`join , ${UNICAST_HOSTS[@]}`
-echo $UNICAST_HOSTS_STR
-
 
 #all_nodes
 #docker run -d -p 29300:29300 -p 29200:29200 -v /usr/local/elasticsearch/master/:/usr/local/elasticsearch/config -v /es/master1/:/data -e ES_MIN_MEM=16g -e ES_MAX_MEM=16g elasticsearch:v1 /start.sh
-
-all_nodes(){
-	start_masters
-	start_querys
-	start_datas
-}
-
 init_unicast(){
 	total=0
 	for idx in "${MASTER_NUM[@]}";
@@ -60,6 +49,12 @@ init_unicast(){
                 UNICAST_HOSTS[${total}]=${HOST}:${DATA_NODE}${idx}
                 total=$(expr ${total} + 1)
         done
+}
+
+all_nodes(){
+	start_masters
+	start_querys
+	start_datas
 }
 
 ARRAY=()
@@ -141,6 +136,9 @@ stop_nodes(){
 
 case $1 in
 	start)
+		init_unicast
+		UNICAST_HOSTS_STR=`join , ${UNICAST_HOSTS[@]}`
+		#echo $UNICAST_HOSTS_STR
 		all_nodes
 		exit 0
 	;;
@@ -149,14 +147,23 @@ case $1 in
 		exit 0
 	;;
 	start_master)
+		init_unicast
+		UNICAST_HOSTS_STR=`join , ${UNICAST_HOSTS[@]}`
+		#echo $UNICAST_HOSTS_STR
 		start_masters
 		exit 0
 	;;
 	start_querys)
+		init_unicast
+		UNICAST_HOSTS_STR=`join , ${UNICAST_HOSTS[@]}`
+		#echo $UNICAST_HOSTS_STR
 		start_querys
 		exit 0
 	;;
 	start_datas)
+		init_unicast
+		UNICAST_HOSTS_STR=`join , ${UNICAST_HOSTS[@]}`
+		#echo $UNICAST_HOSTS_STR
 		start_datas
 		exit 0
 	;;
