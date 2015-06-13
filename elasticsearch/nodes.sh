@@ -1,25 +1,36 @@
 #!/bin/bash
 
-IMG_NAME=elasticsearch:v1
+IMG_NAME=huiyan_es
+
+NODE_ID=0
+
+if [ -n "$CUR_NODE" ]; then
+	NODE_ID=$CUR_NODE	
+fi 
 
 MASTER_MEM=16g
 QUERY_MEM=16g
 DATA_MEM=32g
 
-MASTER_NUM=( 0 1)
+NODES=( 0 1 2 )
+MASTER_NUM=( 1 2 3 )
 MASTER_HTTP=2920
 MASTER_NODE=2930
 
-QUERY_NUM=( 0 1 )
+QUERY_NUM=( 1 2 3 )
 QUERY_HTTP=3000
 QUERY_NODE=3010
 
-DATA_NUM=( 0 1 2 3 )
-DATA_HTTP=2950
-DATA_NODE=2960
+DATA_PER_CON=4
+DATA_NUM=( 01 02 03 04 05 06 07 08 09 10 11 12 )
+DATA_NUM0=( 01 02 03 04 )
+DATA_NUM1=( 05 06 07 08 )
+DATA_NUM2=( 09 10 11 12 )
+DATA_HTTP=400
+DATA_NODE=401
 
-HOST=172.17.42.1
-TARGET_UP=211.99.254.181
+HOST=( 211.99.254.181 211.157.150.230 211.157.150.229 )
+
 UNICAST_HOSTS=():
 
 join(){
@@ -51,6 +62,35 @@ init_unicast(){
                 total=$(expr ${total} + 1)
         done
 }
+
+init_unicast_new(){
+	total=0
+	
+	for idx in "${NODES[@]}";
+	do
+		CUR_HOST=${HOST[${idx}]}
+	
+		UNICAST_HOSTS[${total}]=${CUR_HOST}:${MASTER_NODE}${MASTER_NUM[${idx}]}
+		total=$(expr ${total} + 1 )
+
+		UNICAST_HOSTS[${total}]=${CUR_HOST}:${QUERY_NODE}${QUERY_NUM[${idx}]}
+		total=$(expr ${total} + 1)
+
+	 	echo ${NODE_ID}	
+		START_IDX=$(expr ${NODE_ID} \* ${DATA_PER_CON})
+		END_IDX=$(expr ${START_IDX} + 4 )
+		for idx in "${DATA_NUM[@]:${START_IDX}:${END_IDX}}";
+        	do
+                	UNICAST_HOSTS[${total}]=${CUR_HOST}:${DATA_NODE}${idx}
+                	total=$(expr ${total} + 1)
+        	done
+	
+	done
+
+}
+init_unicast_new
+
+echo ${UNICAST_HOSTS[*]}
 
 start_all_nodes(){
   start_masters

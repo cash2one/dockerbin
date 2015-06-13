@@ -1,3 +1,5 @@
 #!/bin/bash
 
-ln -s conf /conf
+cd /
+
+ln -s /root/dockerbin/elasticsearch/conf 

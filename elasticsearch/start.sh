@@ -2,7 +2,6 @@
 
 yum install -y tar wget hostname
 
-
 ROOT=/usr/local/esservers
 ES_HOME=$ROOT/elasticsearch
 ES_VERSION=1.6.0
