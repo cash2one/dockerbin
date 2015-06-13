@@ -1,0 +1,78 @@
+#node.rack: ${RACK_ENV_VAR}
+
+cluster.name: huiyan_prod
+#node.name: "node_master_2"
+node.master: false 
+node.data: false
+
+#node.rack: node_master_2
+
+node.max_local_storage_nodes: 1
+
+#index.number_of_shards: 16
+#index.number_of_replicas: 1
+
+#path.conf: /path/to/conf
+
+path.data: /es/data
+path.work: /es/work
+path.logs: /es/logs
+#path.plugins: /path/to/plugins
+bootstrap.mlockall: true
+#network.host: master2
+transport.tcp.port: 29300
+transport.tcp.compress: true
+http.port: 29200
+#gateway.type: local
+gateway.recover_after_nodes: 6 
+gateway.recover_after_time: 2m
+gateway.expected_nodes: 6
+
+cluster.routing.allocation.node_initial_primaries_recoveries: 4
+cluster.routing.allocation.node_concurrent_recoveries: 2
+indices.recovery.max_bytes_per_sec: 40mb
+indices.recovery.concurrent_streams: 2
+
+index.refresh_interval: 15s
+
+
+discovery.zen.minimum_master_nodes: 2
+discovery.zen.ping.timeout: 3s
+
+discovery.zen.ping.multicast.enabled: fasle 
+#discovery.zen.ping.unicast.hosts: ["172.17.42.1:29300", "172.17.42.1:29301","172.17.42.1:29302","172.17.42.1:29303","172.17.42.1:29304"]
+
+index.search.slowlog.threshold.query.warn: 10s
+index.search.slowlog.threshold.query.info: 5s
+index.search.slowlog.threshold.query.debug: 2s
+index.search.slowlog.threshold.query.trace: 500ms
+
+index.search.slowlog.threshold.fetch.warn: 1s
+index.search.slowlog.threshold.fetch.info: 800ms
+index.search.slowlog.threshold.fetch.debug: 500ms
+index.search.slowlog.threshold.fetch.trace: 200ms
+
+index.indexing.slowlog.threshold.index.warn: 10s
+index.indexing.slowlog.threshold.index.info: 5s
+index.indexing.slowlog.threshold.index.debug: 2s
+index.indexing.slowlog.threshold.index.trace: 500ms
+
+################################## GC Logging ################################
+
+#monitor.jvm.gc.young.warn: 1000ms
+#monitor.jvm.gc.young.info: 700ms
+#monitor.jvm.gc.young.debug: 400ms
+
+monitor.jvm.gc.old.warn: 10s
+monitor.jvm.gc.old.info: 5s
+monitor.jvm.gc.old.debug: 2s
+
+################################## Security ################################
+
+# Uncomment if you want to enable JSONP as a valid return transport on the
+# http server. With this enabled, it may pose a security risk, so disabling
+# it unless you need it is recommended (it is disabled by default).
+#
+#http.jsonp.enable: true
+
+script.groovy.sandbox.enabled: true
