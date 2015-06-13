@@ -3,11 +3,12 @@
 yum install -y tar wget 
 
 
-ES_HOME=/usr/local/elasticsearch
+ROOT=/usr/local/esservers
+ES_HOME=$ROOT/elasticsearch
 ES_VERSION=1.6.0
 
-mkdir -p $ES_HOME
-cd $ES_HOME
+mkdir -p $ROOT
+cd $ROOT
 
 wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-$ES_VERSION.tar.gz
 
@@ -15,17 +16,11 @@ tar xzvf elasticsearch-$ES_VERSION.tar.gz
 
 ln -s elasticsearch-$ES_VERSION elasticsearch
 
-if [ ! -e /conf/elasticsearch.* ]; then
-  cp $ES_HOME/config/elasticsearch.yml /conf
-fi
-
-if [ ! -e /conf/logging.* ]; then
-  cp $ES_HOME/config/logging.yml /conf
-fi
-
-OPTS=""
-
-
+OPTS="-Des.path.conf=/conf \
+  -Des.path.data=/data \
+  -Des.path.logs=/data \
+  -Des.transport.tcp.port=9300 \
+  -Des.http.port=9200"
 
 if [ -n "$MEM_SIZE" ]; then
   OPTS="$OPTS -Xmx=$MEM_SIZE -Xms=$MEM_SIZE"
