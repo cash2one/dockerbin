@@ -1,5 +1,9 @@
 {
   "template": "access-*",
+  "settings": {
+    "number_of_replicas": 1,
+    "number_of_shards": 16
+  },
   "mappings": {
     "_default_": {
       "_all": {

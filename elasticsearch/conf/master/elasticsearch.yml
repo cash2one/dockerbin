@@ -24,16 +24,16 @@ transport.tcp.port: 29300
 transport.tcp.compress: true
 http.port: 29200
 #gateway.type: local
-gateway.recover_after_nodes: 6
+gateway.recover_after_nodes: 18
 gateway.recover_after_time: 2m
-gateway.expected_nodes: 6
+gateway.expected_nodes: 18
 
 cluster.routing.allocation.node_initial_primaries_recoveries: 4
 cluster.routing.allocation.node_concurrent_recoveries: 2
 indices.recovery.max_bytes_per_sec: 40mb
 indices.recovery.concurrent_streams: 2
 
-index.refresh_interval: 15s
+index.refresh_interval: 30s
 
 
 discovery.zen.minimum_master_nodes: 2
