@@ -1,6 +1,19 @@
 #!/bin/sh
 
+yum install -y tar wget 
+
+
 ES_HOME=/usr/local/elasticsearch
+ES_VERSION=1.6.0
+
+mkdir -p $ES_HOME
+cd $ES_HOME
+
+wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-$ES_VERSION.tar.gz
+
+tar xzvf elasticsearch-$ES_VERSION.tar.gz
+
+ln -s elasticsearch-$ES_VERSION elasticsearch
 
 if [ ! -e /conf/elasticsearch.* ]; then
   cp $ES_HOME/config/elasticsearch.yml /conf
@@ -11,6 +24,12 @@ if [ ! -e /conf/logging.* ]; then
 fi
 
 OPTS=""
+
+
+
+if [ -n "$MEM_SIZE" ]; then
+  OPTS="$OPTS -Xmx=$MEM_SIZE -Xms=$MEM_SIZE"
+fi
 
 if [ -n "$CLUSTER" ]; then
   OPTS="$OPTS -Des.cluster.name=$CLUSTER"
