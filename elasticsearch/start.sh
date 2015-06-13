@@ -1,6 +1,6 @@
 #!/bin/sh
 
-yum install -y tar wget 
+yum install -y tar wget hostname
 
 
 ROOT=/usr/local/esservers
