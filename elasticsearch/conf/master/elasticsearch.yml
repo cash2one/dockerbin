@@ -53,7 +53,7 @@ network.tcp.send_buffer_size: 20mb
 network.tcp.receive_buffer_size: 20mb
 
 # translog
-index.translog.flush_threshold_ops: unlimited
+#index.translog.flush_threshold_ops: unlimited
 index.translog.flush_threshold_size: 128mb
 index.translog.flush_threshold_period: 30m
 index.translog.interval: 10s
