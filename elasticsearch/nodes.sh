@@ -13,27 +13,29 @@ MASTER_MEM=16g
 QUERY_MEM=16g
 DATA_MEM=32g
 
-NODES=( 1 2 3 )
+NODES=( 1 2 )
 
 
-MASTER_NUM=( 1 2 3 )
-
+MASTER_NUM=( 1 2 3 4 )
+MASTER_PER_NODE=2
 MASTER_HTTP=2920
 MASTER_NODE=2930
 
-QUERY_NUM=( 1 2 3 )
+QUERY_NUM=( 1 2 3 4 )
+QUERY_PER_NODE=2
 QUERY_HTTP=3000
 QUERY_NODE=3010
 
-DATA_PER_CON=4
-DATA_NUM=( 01 02 03 04 05 06 07 08 09 10 11 12 )
+
+DATA_NUM=( 01 02 03 04 05 06 07 08 )
+DATA_PER_NODE=4
 #DATA_NUM0=( 01 02 03 04 )
 #DATA_NUM1=( 05 06 07 08 )
 #DATA_NUM2=( 09 10 11 12 )
 DATA_HTTP=400
 DATA_NODE=401
 
-HOST=( 211.99.254.181 211.157.150.230 211.157.150.229 )
+HOST=( 211.157.150.229 211.157.150.230 )
 
 UNICAST_HOSTS=():
 
@@ -75,26 +77,42 @@ init_unicast(){
 		idx=$(expr ${nodeid} - 1)
 		CUR_HOST=${HOST[${idx}]}
 	
-		UNICAST_HOSTS[${total}]=${CUR_HOST}:${MASTER_NODE}${MASTER_NUM[${idx}]}
-		total=$(expr ${total} + 1 )
+		MASTER_START_IDX=$(expr ${idx} \* ${MASTER_PER_NODE})
+		for midx in "${MASTER_NUM[@]:${MASTER_START_IDX}:${MASTER_PER_NODE}}";
+		do
+			UNICAST_HOSTS[${total}]=${CUR_HOST}:${MASTER_NODE}${midx}
+			total=$(expr ${total} + 1 )
+		done
 
-		UNICAST_HOSTS[${total}]=${CUR_HOST}:${QUERY_NODE}${QUERY_NUM[${idx}]}
-		total=$(expr ${total} + 1)
 
-		START_IDX=$(expr ${idx} \* ${DATA_PER_CON})
-		END_IDX=$(expr ${START_IDX} + 4 )
-		for idx in "${DATA_NUM[@]:${START_IDX}:4}";
+		#UNICAST_HOSTS[${total}]=${CUR_HOST}:${MASTER_NODE}${MASTER_NUM[${idx}]}
+		#total=$(expr ${total} + 1 )
+
+		QUERY_START_IDX=$(expr ${idx} \* ${QUERY_PER_NODE})
+		for fidx in "${QUERY_NUM[@]:${QUERY_START_IDX}:${QUERY_PER_NODE}}";
+                do
+                        UNICAST_HOSTS[${total}]=${CUR_HOST}:${QUERY_NODE}${fidx}
+                        total=$(expr ${total} + 1 )
+                done
+
+
+
+		#UNICAST_HOSTS[${total}]=${CUR_HOST}:${QUERY_NODE}${QUERY_NUM[${idx}]}
+		#total=$(expr ${total} + 1)
+
+		START_IDX=$(expr ${idx} \* ${DATA_PER_NODE})
+		for didx in "${DATA_NUM[@]:${START_IDX}:${DATA_PER_NODE}}";
         	do
-                	UNICAST_HOSTS[${total}]=${CUR_HOST}:${DATA_NODE}${idx}
+                	UNICAST_HOSTS[${total}]=${CUR_HOST}:${DATA_NODE}${didx}
                 	total=$(expr ${total} + 1)
         	done
 	
 	done
 
 }
-#init_unicast
+init_unicast
 
-#echo ${UNICAST_HOSTS[*]}
+echo ${UNICAST_HOSTS[*]}
 
 start_all_nodes(){
   start_masters
