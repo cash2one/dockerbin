@@ -8,12 +8,16 @@ if [ -n "$CUR_NODE" ]; then
 	NODE_ID=$CUR_NODE	
 fi 
 
+echo "Current running node on ${NODE_ID}"
 MASTER_MEM=16g
 QUERY_MEM=16g
 DATA_MEM=32g
 
-NODES=( 0 1 2 )
+NODES=( 1 2 3 )
+
+
 MASTER_NUM=( 1 2 3 )
+
 MASTER_HTTP=2920
 MASTER_NODE=2930
 
@@ -23,9 +27,9 @@ QUERY_NODE=3010
 
 DATA_PER_CON=4
 DATA_NUM=( 01 02 03 04 05 06 07 08 09 10 11 12 )
-DATA_NUM0=( 01 02 03 04 )
-DATA_NUM1=( 05 06 07 08 )
-DATA_NUM2=( 09 10 11 12 )
+#DATA_NUM0=( 01 02 03 04 )
+#DATA_NUM1=( 05 06 07 08 )
+#DATA_NUM2=( 09 10 11 12 )
 DATA_HTTP=400
 DATA_NODE=401
 
@@ -42,7 +46,7 @@ join(){
 
 #all_nodes
 #docker run -d -p 29300:29300 -p 29200:29200 -v /usr/local/elasticsearch/master/:/usr/local/elasticsearch/config -v /es/master1/:/data -e ES_MIN_MEM=16g -e ES_MAX_MEM=16g elasticsearch:v1 /start.sh
-init_unicast(){
+init_unicast_old(){
   total=0
   for idx in "${MASTER_NUM[@]}";
   do
@@ -63,11 +67,12 @@ init_unicast(){
         done
 }
 
-init_unicast_new(){
+init_unicast(){
 	total=0
 	
-	for idx in "${NODES[@]}";
+	for nodeid in "${NODES[@]}";
 	do
+		idx=$(expr ${nodeid} - 1)
 		CUR_HOST=${HOST[${idx}]}
 	
 		UNICAST_HOSTS[${total}]=${CUR_HOST}:${MASTER_NODE}${MASTER_NUM[${idx}]}
@@ -76,10 +81,9 @@ init_unicast_new(){
 		UNICAST_HOSTS[${total}]=${CUR_HOST}:${QUERY_NODE}${QUERY_NUM[${idx}]}
 		total=$(expr ${total} + 1)
 
-	 	echo ${NODE_ID}	
-		START_IDX=$(expr ${NODE_ID} \* ${DATA_PER_CON})
+		START_IDX=$(expr ${idx} \* ${DATA_PER_CON})
 		END_IDX=$(expr ${START_IDX} + 4 )
-		for idx in "${DATA_NUM[@]:${START_IDX}:${END_IDX}}";
+		for idx in "${DATA_NUM[@]:${START_IDX}:4}";
         	do
                 	UNICAST_HOSTS[${total}]=${CUR_HOST}:${DATA_NODE}${idx}
                 	total=$(expr ${total} + 1)
@@ -88,9 +92,9 @@ init_unicast_new(){
 	done
 
 }
-init_unicast_new
+#init_unicast
 
-echo ${UNICAST_HOSTS[*]}
+#echo ${UNICAST_HOSTS[*]}
 
 start_all_nodes(){
   start_masters
@@ -129,8 +133,7 @@ ARRAY=()
 
 
 run_nodes(){
-  stop_all_nodes
-
+  #stop_all_nodes
   run_masters
   run_datas
   run_querys
@@ -138,20 +141,21 @@ run_nodes(){
 
 run_masters(){
   ROLE=master
-  ARRAY=( ${MASTER_NUM[@]} )
+  ARRAY=( ${MASTER_NUM[${NODE_ID}]} )
   loop_nodes 0 ${ROLE} ${MASTER_HTTP} ${MASTER_NODE} ${MASTER_MEM}
 
 }
 
 run_querys(){
   ROLE=query
-  ARRAY=( ${QUERY_NUM[@]} )
+  ARRAY=( ${QUERY_NUM[${NODE_ID}]} )
   loop_nodes 0 ${ROLE} ${QUERY_HTTP} ${QUERY_NODE} ${QUERY_MEM}
 }
 
 run_datas(){
   ROLE=data
-  ARRAY=( ${DATA_NUM[@]} )
+  START_IDX=$(expr ${NODE_ID} \* ${DATA_PER_CON})
+  ARRAY=( ${DATA_NUM[@]:${START_IDX}:4} )
   loop_nodes 0 ${ROLE} ${DATA_HTTP} ${DATA_NODE} ${DATA_MEM}
 }
 
@@ -177,7 +181,7 @@ run_node(){
   HOST_NODE_PORT=$4
   MEM_SIZE=$5
   
-  CMD="docker run -d --name ${NODE_NAME} -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /usr/local/elasticsearch/${NODE_ROLE}/:/usr/local/elasticsearch/config -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
+  CMD="docker run -d --name ${NODE_NAME} -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /conf/${NODE_ROLE}/:/conf -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
 
 
   echo 'Now running:' ${NODE_NAME}

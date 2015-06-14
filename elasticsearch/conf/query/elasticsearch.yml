@@ -24,24 +24,44 @@ transport.tcp.port: 29300
 transport.tcp.compress: true
 http.port: 29200
 #gateway.type: local
-gateway.recover_after_nodes: 6 
-gateway.recover_after_time: 2m
-gateway.expected_nodes: 6
+gateway.recover_after_nodes: 12
+#gateway.recover_after_time: 2m  # expected_nodes met , time will be ignored.
+gateway.expected_master_nodes: 4
+gateway.expected_data_nodes: 8
 
 cluster.routing.allocation.node_initial_primaries_recoveries: 4
 cluster.routing.allocation.node_concurrent_recoveries: 2
 indices.recovery.max_bytes_per_sec: 40mb
 indices.recovery.concurrent_streams: 2
 
-index.refresh_interval: 15s
+index.refresh_interval: 30s
 
-
-discovery.zen.minimum_master_nodes: 2
-discovery.zen.ping.timeout: 3s
+discovery.zen.fd.ping_interval: 1s #default
+discovery.zen.fd.ping_timeout: 30s #default
+discovery.zen.fd.ping_retries: 5 #default
+discovery.zen.minimum_master_nodes: 3 
+discovery.zen.ping.timeout: 5s
 
 discovery.zen.ping.multicast.enabled: fasle 
 #discovery.zen.ping.unicast.hosts: ["172.17.42.1:29300", "172.17.42.1:29301","172.17.42.1:29302","172.17.42.1:29303","172.17.42.1:29304"]
 
+# network
+network.tcp.no_delay: true
+network.tcp.keep_alive: true
+network.tcp.reuse_address: true
+network.tcp.send_buffer_size: 20mb
+network.tcp.receive_buffer_size: 20mb
+
+# translog
+index.translog.flush_threshold_ops: unlimited
+index.translog.flush_threshold_size: 128mb
+index.translog.flush_threshold_period: 30m
+index.translog.interval: 10s
+index.gateway.local.sync: 5s
+
+
+
+# log
 index.search.slowlog.threshold.query.warn: 10s
 index.search.slowlog.threshold.query.info: 5s
 index.search.slowlog.threshold.query.debug: 2s
@@ -74,5 +94,6 @@ monitor.jvm.gc.old.debug: 2s
 # it unless you need it is recommended (it is disabled by default).
 #
 #http.jsonp.enable: true
+
 
 script.groovy.sandbox.enabled: true
