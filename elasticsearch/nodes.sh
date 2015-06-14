@@ -36,7 +36,7 @@ DATA_HTTP=400
 DATA_NODE=401
 
 HOST=( 211.157.150.229 211.157.150.230 )
-
+CUR_HOST=1
 UNICAST_HOSTS=():
 
 join(){
@@ -205,7 +205,7 @@ run_node(){
   HOST_NODE_PORT=$4
   MEM_SIZE=$5
   
-  CMD="docker run -d --privileged=true --name ${NODE_NAME} -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /conf/${NODE_ROLE}/:/conf -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
+  CMD="docker run -d --privileged=true --name ${NODE_NAME} -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /conf/${NODE_ROLE}/:/conf -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh ${CUR_HOST} ${HOST_NODE_PORT}"
 
 
   echo 'Now running:' ${NODE_NAME}
