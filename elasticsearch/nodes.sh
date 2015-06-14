@@ -110,9 +110,9 @@ init_unicast(){
 	done
 
 }
-init_unicast
+#init_unicast
 
-echo ${UNICAST_HOSTS[*]}
+#echo ${UNICAST_HOSTS[*]}
 
 start_all_nodes(){
   start_masters
@@ -159,21 +159,27 @@ run_nodes(){
 
 run_masters(){
   ROLE=master
-  ARRAY=( ${MASTER_NUM[${NODE_ID}]} )
+  IDX=$(expr ${NODE_ID} - 1) 
+  START_IDX=$(expr ${IDX} \* ${MASTER_PER_NODE})
+  ARRAY=( ${MASTER_NUM[@]:${START_IDX}:${MASTER_PER_NODE}} )
   loop_nodes 0 ${ROLE} ${MASTER_HTTP} ${MASTER_NODE} ${MASTER_MEM}
-
 }
 
 run_querys(){
   ROLE=query
-  ARRAY=( ${QUERY_NUM[${NODE_ID}]} )
+  
+  IDX=$(expr ${NODE_ID} - 1) 
+  START_IDX=$(expr ${IDX} \* ${QUERY_PER_NODE})
+  ARRAY=( ${QUERY_NUM[@]:${START_IDX}:${QUERY_PER_NODE}} )
   loop_nodes 0 ${ROLE} ${QUERY_HTTP} ${QUERY_NODE} ${QUERY_MEM}
 }
 
 run_datas(){
   ROLE=data
-  START_IDX=$(expr ${NODE_ID} \* ${DATA_PER_CON})
-  ARRAY=( ${DATA_NUM[@]:${START_IDX}:4} )
+
+  IDX=$(expr ${NODE_ID} - 1) 
+  START_IDX=$(expr ${IDX} \* ${DATA_PER_NODE})
+  ARRAY=( ${DATA_NUM[@]:${START_IDX}:${DATA_PER_NODE}} )
   loop_nodes 0 ${ROLE} ${DATA_HTTP} ${DATA_NODE} ${DATA_MEM}
 }
 
@@ -199,14 +205,14 @@ run_node(){
   HOST_NODE_PORT=$4
   MEM_SIZE=$5
   
-  CMD="docker run -d --name ${NODE_NAME} -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /conf/${NODE_ROLE}/:/conf -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
+  CMD="docker run -d --privileged=true --name ${NODE_NAME} -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /conf/${NODE_ROLE}/:/conf -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
 
 
   echo 'Now running:' ${NODE_NAME}
   docker rm ${NODE_NAME}
-  ${CMD}
 
-  sleep 20
+  ${CMD}
+  sleep 10
 }
 
 stop_all_nodes(){
