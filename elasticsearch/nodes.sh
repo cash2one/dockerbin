@@ -151,7 +151,7 @@ ARRAY=()
 
 
 run_nodes(){
-  #stop_all_nodes
+  stop_all_nodes
   run_masters
   run_datas
   run_querys
@@ -212,11 +212,15 @@ run_node(){
   docker rm ${NODE_NAME}
 
   ${CMD}
-  sleep 10
+  sleep 1
 }
 
 stop_all_nodes(){
-  curl -XPOST 'http://211.99.254.181:29200/_cluster/nodes/_all/_shutdown'
+  curl -XPOST 'http://server1:30001/_cluster/nodes/_all/_shutdown'
+
+  #curl -XPOST 'http://server1:30002/_cluster/nodes/_all/_shutdown'
+  #curl -XPOST 'http://server2:30003/_cluster/nodes/_all/_shutdown'
+  #curl -XPOST 'http://server2:30004/_cluster/nodes/_all/_shutdown'
   stop_masters
   sleep 10
   stop_datas
