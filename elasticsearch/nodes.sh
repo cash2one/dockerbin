@@ -215,11 +215,11 @@ run_node(){
   
   CMD="docker run -d --net=host --privileged=true --name ${NODE_NAME} -e HTTP_PORT=${HOST_HTTP_PORT} -e NODE_PORT=${HOST_NODE_PORT} -v /conf/${NODE_ROLE}/:/conf -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
 
+  echo 'Now remove:' ${NODE_NAME}
+  docker rm ${NODE_NAME}
 
   echo 'Now running:' ${NODE_NAME}
-  #docker rm ${NODE_NAME}
-
-  echo "${CMD}"
+  ${CMD}
   sleep 1
 }
 
