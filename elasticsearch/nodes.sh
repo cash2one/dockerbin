@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMG_NAME=huiyan_es
+IMG_NAME=huiyan_es_port
 
 NODE_ID=0
 
@@ -110,8 +110,9 @@ init_unicast(){
                 	total=$(expr ${total} + 1)
         	done
 	
-	done
 
+	done
+	echo ${UNICAST_HOSTS[*]}
 }
 #init_unicast
 
