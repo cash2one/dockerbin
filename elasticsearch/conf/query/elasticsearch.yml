@@ -20,9 +20,9 @@ path.logs: /es/logs
 #path.plugins: /path/to/plugins
 bootstrap.mlockall: true
 #network.host: master2
-transport.tcp.port: 29300
+#transport.tcp.port: 29300
 transport.tcp.compress: true
-http.port: 29200
+#http.port: 29200
 #gateway.type: local
 gateway.recover_after_nodes: 12
 #gateway.recover_after_time: 2m  # expected_nodes met , time will be ignored.

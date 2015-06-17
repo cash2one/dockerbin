@@ -35,8 +35,11 @@ DATA_PER_NODE=4
 DATA_HTTP=400
 DATA_NODE=401
 
-HOST=( 211.157.150.229 211.157.150.230 )
-PUBLISH_HOST=${HOST[$(expr ${NODE_ID} - 1)]}
+PUBLIC_HOST=( 211.157.150.229 211.157.150.230 )
+# used for node connection
+HOST=( 192.168.1.11 192.168.1.12 )
+PUBLISH_HOST=${BIND_HOST[$(expr ${NODE_ID} - 1)]}
+
 UNICAST_HOSTS=():
 
 join(){
@@ -162,7 +165,8 @@ run_masters(){
   IDX=$(expr ${NODE_ID} - 1) 
   START_IDX=$(expr ${IDX} \* ${MASTER_PER_NODE})
   ARRAY=( ${MASTER_NUM[@]:${START_IDX}:${MASTER_PER_NODE}} )
-  loop_nodes 0 ${ROLE} ${MASTER_HTTP} ${MASTER_NODE} ${MASTER_MEM}
+  BIND_IP=${HOST[${IDX}]}
+  loop_nodes ${BIND_IP} ${ROLE} ${MASTER_HTTP} ${MASTER_NODE} ${MASTER_MEM}
 }
 
 run_querys(){
@@ -171,27 +175,30 @@ run_querys(){
   IDX=$(expr ${NODE_ID} - 1) 
   START_IDX=$(expr ${IDX} \* ${QUERY_PER_NODE})
   ARRAY=( ${QUERY_NUM[@]:${START_IDX}:${QUERY_PER_NODE}} )
-  loop_nodes 0 ${ROLE} ${QUERY_HTTP} ${QUERY_NODE} ${QUERY_MEM}
+  BIND_IP=${PUBLIC_HOST[${IDX}]}
+  loop_nodes ${BIND_IP} ${ROLE} ${QUERY_HTTP} ${QUERY_NODE} ${QUERY_MEM}
 }
 
 run_datas(){
   ROLE=data
 
-  IDX=$(expr ${NODE_ID} - 1) 
+  IDX=$(expr ${NODE_ID} - 1)
   START_IDX=$(expr ${IDX} \* ${DATA_PER_NODE})
   ARRAY=( ${DATA_NUM[@]:${START_IDX}:${DATA_PER_NODE}} )
-  loop_nodes 0 ${ROLE} ${DATA_HTTP} ${DATA_NODE} ${DATA_MEM}
+  BIND_IP=${HOST[${IDX}]}
+  loop_nodes ${BIND_IP} ${ROLE} ${DATA_HTTP} ${DATA_NODE} ${DATA_MEM}
 }
 
 # {1,2,3.....} {master|query|data} {2920} {2930} {16g|32g}
 loop_nodes(){
+  BIND_IP=$1
   ROLE=$2
   HTTP=$3
   NODE=$4
   MEM=$5
   for idx in ${ARRAY[@]}
   do
-    run_node ${ROLE}${idx} ${ROLE} ${HTTP}${idx} ${NODE}${idx} ${MEM}
+    run_node ${ROLE}${idx} ${ROLE} ${HTTP}${idx} ${NODE}${idx} ${MEM} ${BIND_IP}
   done
 }
 
@@ -204,14 +211,15 @@ run_node(){
   HOST_HTTP_PORT=$3
   HOST_NODE_PORT=$4
   MEM_SIZE=$5
+  HOST_IP=$6
   
-  CMD="docker run -d --privileged=true --name ${NODE_NAME} -p ${HOST_HTTP_PORT}:29200 -p ${HOST_NODE_PORT}:29300 -v /conf/${NODE_ROLE}/:/conf -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e PUBLISH_AS=${PUBLISH_HOST}:${HOST_NODE_PORT} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
+  CMD="docker run -d --net=host --privileged=true --name ${NODE_NAME} -e HTTP_PORT=${HOST_HTTP_PORT} -e NODE_PORT=${HOST_NODE_PORT} -v /conf/${NODE_ROLE}/:/conf -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
 
 
   echo 'Now running:' ${NODE_NAME}
-  docker rm ${NODE_NAME}
+  #docker rm ${NODE_NAME}
 
-  ${CMD}
+  echo "${CMD}"
   sleep 1
 }
 
