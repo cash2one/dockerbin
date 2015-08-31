@@ -110,8 +110,9 @@ init_unicast(){
                 	total=$(expr ${total} + 1)
         	done
 	
-	done
 
+	done
+	echo ${UNICAST_HOSTS[*]}
 }
 #init_unicast
 
