@@ -23,6 +23,7 @@ bootstrap.mlockall: true
 #transport.tcp.port: 29300
 transport.tcp.compress: true
 #http.port: 29200
+http.compression: true
 #gateway.type: local
 gateway.recover_after_nodes: 12
 #gateway.recover_after_time: 2m  # expected_nodes met , time will be ignored.

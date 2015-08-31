@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMG_NAME=huiyan_es
+IMG_NAME=huiyan_es_port
 
 NODE_ID=0
 
