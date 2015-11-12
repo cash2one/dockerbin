@@ -220,20 +220,20 @@ run_node(){
   docker rm ${NODE_NAME}
 
   echo 'Now running:' ${NODE_NAME}
-  echo "${CMD}"
+  ${CMD}
   sleep 1
 }
 
 stop_all_nodes(){
-  curl -XPOST 'http://server1:30001/_cluster/nodes/_all/_shutdown'
+  curl -XPOST 'http://gw_server1:30001/_cluster/nodes/_all/_shutdown'
 
   #curl -XPOST 'http://server1:30002/_cluster/nodes/_all/_shutdown'
   #curl -XPOST 'http://server2:30003/_cluster/nodes/_all/_shutdown'
   #curl -XPOST 'http://server2:30004/_cluster/nodes/_all/_shutdown'
   stop_masters
-  sleep 10
+  sleep 5 
   stop_datas
-  sleep 10
+  sleep 5
   stop_querys
 }
 
