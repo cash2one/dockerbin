@@ -1,186 +1,25 @@
 {
+  "order": 0,
   "template": "access-*",
   "settings": {
-    "number_of_replicas": 1,
-    "number_of_shards": 16
+    "index": {
+      "number_of_shards": "16",
+      "number_of_replicas": "1"
+    }
   },
   "mappings": {
     "_default_": {
+      "_source": {
+        "enabled": true
+      },
       "_all": {
         "store": false
       },
-      "_source": {
-        "enabled": true,
-        "compress": true
-      },
       "properties": {
-        "_id": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "_type": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "vid": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "rf_type": {
-          "type": "integer"
-        },
-        "se": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "kw": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "region": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "isp": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "city": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "utime": {
-          "index": "not_analyzed",
-          "type": "date"
-        },
-        "User-Agent": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "Accept-Encoding": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "remote": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "Cookie": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "method": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "Accept": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "Accept-Charset": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "Accept-Language": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "Connection": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "Host": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "version": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "Cache-Control": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "br": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "ck": {
-          "type": "integer"
-        },
-        "ct": {
-          "type": "integer"
-        },
-        "dt": {
-          "index": "not_analyzed",
-          "type": "date"
-        },
-        "fl": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "ja": {
-          "type": "integer"
-        },
-        "entrance": {
-          "type": "integer"
-        },
-        "lg": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "loc": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "os": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "pm": {
-          "type": "integer"
-        },
-        "rf": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "sc": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "sr": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "tit": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
         "tt": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "v": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "u": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "et_action": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "et_category": {
-          "index": "not_analyzed",
-          "type": "string"
+          "type": "murmur3"
         },
         "et_label": {
-          "index": "not_analyzed",
-          "type": "string"
-        },
-        "et_value": {
           "index": "not_analyzed",
           "type": "string"
         },
@@ -194,25 +33,18 @@
             }
           }
         },
-        "dms": {
-          "type": "long"
+        "p_income": {
+          "type": "double"
         },
-        "let": {
-          "type": "long"
+        "isp": {
+          "index": "not_analyzed",
+          "type": "string"
         },
-        "nett": {
-          "type": "long"
+        "User-Agent": {
+          "index": "not_analyzed",
+          "type": "string"
         },
-        "netd": {
-          "type": "long"
-        },
-        "nttp": {
-          "type": "long"
-        },
-        "srv": {
-          "type": "long"
-        },
-        "cv": {
+        "des_url": {
           "index": "not_analyzed",
           "type": "string"
         },
@@ -220,17 +52,86 @@
           "index": "not_analyzed",
           "type": "string"
         },
+        "Accept-Encoding": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "dms": {
+          "type": "long"
+        },
         "tmc": {
           "index": "not_analyzed",
           "type": "string"
         },
-        "tod": {
+        "remote": {
+          "type": "murmur3"
+        },
+        "vid": {
           "index": "not_analyzed",
           "type": "string"
         },
-        "_ucv": {
+        "dt": {
+          "index": "not_analyzed",
+          "type": "date"
+        },
+        "acid": {
+          "type": "long"
+        },
+        "et_value": {
           "index": "not_analyzed",
           "type": "string"
+        },
+        "p_orderid": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "let": {
+          "type": "long"
+        },
+        "api": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "entrance": {
+          "type": "integer"
+        },
+        "tit": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "Cookie": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "app": {
+          "type": "integer"
+        },
+        "method": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "Accept": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "version": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "kwna": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "Cache-Control": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "rf": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "kwid": {
+          "type": "long"
         },
         "paths": {
           "properties": {
@@ -260,39 +161,187 @@
             }
           }
         },
-        "api": {
+        "ja": {
+          "type": "integer"
+        },
+        "_id": {
           "index": "not_analyzed",
           "type": "string"
         },
-        "acid": {
-          "type": "long"
+        "Accept-Language": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "region": {
+          "index": "not_analyzed",
+          "type": "string"
         },
         "cid": {
           "type": "long"
         },
+        "appn": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "os_num": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "mobr": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "loc": {
+          "type": "murmur3"
+        },
+        "nett": {
+          "type": "long"
+        },
+        "city": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "_ucv": {
+          "type": "murmur3"
+        },
+        "fl": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "tod": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "media": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "ip_dupli": {
+          "type": "integer"
+        },
         "cpna": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "br": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "sc": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "se": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "netd": {
+          "type": "long"
+        },
+        "et_target": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "sr": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "rf_type": {
+          "type": "integer"
+        },
+        "Accept-Charset": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "et_action": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "crt": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "os": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "utime": {
+          "index": "not_analyzed",
+          "type": "date"
+        },
+        "et_category": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "_type": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "Connection": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "ck": {
+          "type": "integer"
+        },
+        "Host": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "kw": {
           "index": "not_analyzed",
           "type": "string"
         },
         "agid": {
           "type": "long"
         },
+        "tc": {
+          "type": "integer"
+        },
+        "ct": {
+          "type": "integer"
+        },
+        "nttp": {
+          "type": "long"
+        },
+        "cv": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
         "agna": {
           "index": "not_analyzed",
           "type": "string"
         },
-        "kwid": {
+        "u": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "p_name": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "v": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "srv": {
           "type": "long"
         },
-        "kwna": {
+        "momo": {
           "index": "not_analyzed",
           "type": "string"
         },
-        "des_url": {
+        "lg": {
           "index": "not_analyzed",
           "type": "string"
+        },
+        "pm": {
+          "type": "integer"
         }
       }
     }
+  },
+  "aliases": {
+
   }
 }
