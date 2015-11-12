@@ -1,8 +1,8 @@
 #!/bin/bash
 
-IMG_NAME=huiyan_es_port
+IMG_NAME=huiyan/elasticsearch:v2.0.0
 
-NODE_ID=0
+NODE_ID=1
 
 if [ -n "$CUR_NODE" ]; then
 	NODE_ID=$CUR_NODE	
@@ -35,10 +35,10 @@ DATA_PER_NODE=4
 DATA_HTTP=400
 DATA_NODE=401
 
-PUBLIC_HOST=( 211.157.150.229 211.157.150.230 )
+PUBLIC_HOST=( gw_server1 gw_server2 )
 # used for node connection
-HOST=( 192.168.1.11 192.168.1.12 )
-PUBLISH_HOST=${BIND_HOST[$(expr ${NODE_ID} - 1)]}
+HOST=( gw_server1 gw_server2 )
+#PUBLISH_HOST=${BIND_HOST[$(expr ${NODE_ID} - 1)]}
 
 UNICAST_HOSTS=():
 
@@ -155,7 +155,7 @@ ARRAY=()
 
 
 run_nodes(){
-  stop_all_nodes
+  #stop_all_nodes
   run_masters
   run_datas
   run_querys
@@ -214,13 +214,13 @@ run_node(){
   MEM_SIZE=$5
   HOST_IP=$6
   
-  CMD="docker run -d --net=host --privileged=true --name ${NODE_NAME} -e HTTP_PORT=${HOST_HTTP_PORT} -e NODE_PORT=${HOST_NODE_PORT} -v /conf/${NODE_ROLE}/:/conf -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start.sh"
+  CMD="docker run -d --net=host -e PUBLISH_AS=$HOST_IP --privileged=true --name ${NODE_NAME} -e HTTP_PORT=${HOST_HTTP_PORT} -e NODE_PORT=${HOST_NODE_PORT} -v /conf/${NODE_ROLE}/:/conf -v /es/${NODE_NAME}:/data -e ES_MIN_MEM=${MEM_SIZE} -e ES_MAX_MEM=${MEM_SIZE} -e NODE_NAME=${NODE_NAME} -e UNICAST_HOSTS=${UNICAST_HOSTS_STR} ${IMG_NAME} /start"
 
   echo 'Now remove:' ${NODE_NAME}
   docker rm ${NODE_NAME}
 
   echo 'Now running:' ${NODE_NAME}
-  ${CMD}
+  echo "${CMD}"
   sleep 1
 }
 
