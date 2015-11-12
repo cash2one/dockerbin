@@ -225,7 +225,7 @@ run_node(){
 }
 
 stop_all_nodes(){
-  curl -XPOST 'http://gw_server1:30001/_cluster/nodes/_all/_shutdown'
+  #curl -XPOST 'http://gw_server1:30001/_cluster/nodes/_all/_shutdown'
 
   #curl -XPOST 'http://server1:30002/_cluster/nodes/_all/_shutdown'
   #curl -XPOST 'http://server2:30003/_cluster/nodes/_all/_shutdown'
