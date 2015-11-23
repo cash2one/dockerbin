@@ -1,11 +1,19 @@
 #node.rack: ${RACK_ENV_VAR}
+###########################
+# 该配置文件只针对es2.0版本
+###########################
 
+
+# 集群名称
 cluster.name: huiyan_prod
+
+# 节点名在启动时作为参数传入
 #node.name: "node_master_2"
 node.master: true
 node.data: false
 
 #node.rack: node_master_2
+
 
 node.max_local_storage_nodes: 1
 
@@ -54,9 +62,14 @@ network.tcp.receive_buffer_size: 20mb
 
 # translog
 #index.translog.flush_threshold_ops: unlimited
+# 索引日志写入阀值(文件大小）
 index.translog.flush_threshold_size: 128mb
-index.translog.flush_threshold_period: 30m
+# 索引文件写入阀值(记录周期)
+index.translog.flush_threshold_period: 5m
+# 索引文件刷新间隔
 index.translog.interval: 10s
+
+# 文件刷新时间
 index.gateway.local.sync: 5s
 
 
@@ -95,5 +108,5 @@ monitor.jvm.gc.old.debug: 2s
 #
 #http.jsonp.enable: true
 
-
-script.groovy.sandbox.enabled: true
+# 取消script支持
+script.groovy.sandbox.enabled: false
